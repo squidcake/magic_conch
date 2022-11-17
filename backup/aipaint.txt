@@ -1,0 +1,70 @@
+@deco_usage_auth
+def app_aipainting_pic(msg,para):
+    gid=get_group(msg)
+    uid=get_user(msg)
+    name=get_group_cardname(gid,uid)
+    replyid=get_replyid(msg)
+    reply_msg=get_msg(replyid)
+    pic=get_img_base_CQ(reply_msg["message"])
+    pic=str(pic,"utf-8")
+    if pic is None:
+        sendmsg(gid,"哎呀····，读取图片失败了~")
+
+
+    key="aipainting"+str(gid)
+    if get_redis(key):
+        sendmsg(gid,"已经有图在绘画啦，请稍后喔~")
+        return
+    else:
+        set_copy_redis(key,"",ex=60)
+    message=msg["message"]
+    message = re.sub(".*神奇海螺(,|，|\s|)(AI|ai)绘图","",message)
+    sendmsg(gid, "正在为【{0}】绘图中请稍后喔~".format(name))
+
+    # 控制
+    temp=message
+    huge_flag=False
+    translate_flag=False
+
+    # 大图控制
+    huge_flag="大图" in message
+
+    # 翻译为英文
+    for ch in message:
+        if u'\u4e00' <= ch <= u'\u9fff':
+            translate_flag = True
+            break
+    if translate_flag and "原文" not in message:
+        url = "http://fanyi.youdao.com/translate"
+        data = {
+            'doctype': 'json',
+            'type': 'AUTO',
+            'i': message.encode("utf-8")
+        }
+        r = requests.get(url, params=data)
+        result = r.json()
+        try:
+            message = result["translateResult"][0][0]["tgt"]
+            sendmsg(gid,"原文已翻译为:"+message)
+        except:
+            print("英语翻译错误！！！！！")
+            message=temp
+
+    message=message.replace("原文","")
+    message = message.replace("大图", "")
+
+    try:
+        raw = aipainting.pic_paint(message,pic,huge_flag)
+        img=get_CQimg_base(raw)
+    except Exception as e:
+        traceback.print_exc()
+        sendmsg(gid,"哎呀····，出错了，看来暂时还画不了哟~")
+        del_redis(key)
+        return
+    sendmsg(gid,img,show_flag=False)
+    sendmsg(gid,"来自{0}的画作！(novelai图转图)".format(name))
+    dice=random.randint(1,10)
+    if dice<=2:
+        sendmsg(gid, "提示：使用英文输入会更加准确哟，输入“神奇海螺，结束绘图”可以强制终止绘图！")
+    del_redis(key)
+    return
