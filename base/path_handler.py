@@ -1,6 +1,6 @@
 import re
 import magic_conch.config as config
-from magic_conch.base.myutils import get_user,get_banlist,sendmsg
+from magic_conch.base.myutils import get_user,get_banlist,sendmsg_private
 import threading
 import traceback
 
