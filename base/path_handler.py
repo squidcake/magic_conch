@@ -1,8 +1,8 @@
 import re
 import magic_conch.config as config
-from magic_conch.base.myutils import get_user,get_banlist
+from magic_conch.base.myutils import get_user,get_banlist,sendmsg
 import threading
-
+import traceback
 
 
 def path(url,func,weight=config.DEFAULT_MAX,post_type="message",**kwargs):
@@ -41,7 +41,7 @@ def router(msg,PATH,minweight,except_list=[],banflag=False):
     if "meta_event_type" in msg and msg["meta_event_type"]=='heartbeat':
         return
     if "message" in msg and "[CQ:at,qq={0}]".format(config.QQ_ID) in msg["message"]:
-        print(msg["message"],11111111111111111111)
+        print(msg["message"],"被@")
         msg["message"]=msg["message"].replace("[CQ:at,qq={0}]".format(config.QQ_ID),config.QQ_NAME)
 
 
@@ -75,8 +75,11 @@ def router(msg,PATH,minweight,except_list=[],banflag=False):
             return
         print("routing:", temp["url"],temp["func"].__name__)
         print()
-
-    result= temp["func"](msg,para=temp["__para"])
+    try:
+        result= temp["func"](msg,para=temp["__para"])
+    except:
+        sendmsg_private(config.MONITOR,traceback.format_exc())
+        return
 
     if result:
         except_list.append(temp)

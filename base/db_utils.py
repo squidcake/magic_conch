@@ -100,7 +100,7 @@ def count_goodnight(gid,day):
 
 def saymorning(gid,uid,mytime):
     day=mytime.strftime("%Y-%m-%d")
-    flag=ischeckedmorning(uid,day)
+    flag=ischeckedmorning(gid,uid,day)
     if flag:
         return False
     else:
@@ -119,10 +119,10 @@ def count_morning(gid,day):
     cursor.execute(sql)
     result=cursor.fetchall()
     return len(result)
-def ischeckedmorning(uid,day):
+def ischeckedmorning(gid,uid,day):
     db = makesql()
     cursor = db.cursor()
-    sql='SELECT * FROM morning where uid="{0}" and day="{1}"'.format(uid,day)
+    sql='SELECT * FROM morning where uid="{0}" and day="{1}" and gid="{2}"'.format(uid,day,gid)
     print(sql)
     cursor.execute(sql)
     result=cursor.fetchall()
