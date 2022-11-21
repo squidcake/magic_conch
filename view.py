@@ -802,14 +802,14 @@ def sayToMe(msg,para):
         if message[0:2]=="搜图":
             search=message[2:]
             pic_url=baidu.app_search_pic(search)
-            with open(root+"\\log\\search\\"+datetime.datetime.now().strftime("%Y年%m月%d日")+".txt","a+",encoding="utf-8") as f:
+            with open(root+"//logsearch//"+datetime.datetime.now().strftime("%Y年%m月%d日")+".txt","a+",encoding="utf-8") as f:
                 f.write("{5}    群：【{0}】({1})用户《{2}》（{3}）图片：【{4}】{6}\n".format(get_group_name(gid),gid,get_group_cardname(gid,uid),\
                     uid,search,datetime.datetime.now().strftime("%H:%M:%S"),pic_url))
             
         else:
             search=message[4:]
             pic_url=baidu.app_search_pic(search,mode=6)
-            with open(root+"\\log\\search\\"+datetime.datetime.now().strftime("%Y年%m月%d日")+".txt","a+",encoding="utf-8") as f:
+            with open(root+"//log//search//"+datetime.datetime.now().strftime("%Y年%m月%d日")+".txt","a+",encoding="utf-8") as f:
                 f.write("{5}    群：【{0}】({1})用户《{2}》（{3}）图片：【{4}】{6}\n".format(get_group_name(gid),gid,get_group_cardname(gid,uid),\
                     uid,search,datetime.datetime.now().strftime("%H:%M:%S"),pic_url))
             
@@ -833,7 +833,7 @@ def sayToMe(msg,para):
             sendmsg(gid,"哎呀，图片上传失败啦...")
         return
     elif message[0:1]!="你":
-        with open(root+"\\log\\search\\"+datetime.datetime.now().strftime("%Y年%m月%d日")+".txt","a+",encoding="utf-8") as f:
+        with open(root+"//log//search//"+datetime.datetime.now().strftime("%Y年%m月%d日")+".txt","a+",encoding="utf-8") as f:
                 f.write("{5}    群：【{0}】({1})用户《{2}》（{3}）搜索：【{4}】\n".format(get_group_name(gid),gid,get_group_cardname(gid,uid),\
                     uid,message,datetime.datetime.now().strftime("%H:%M:%S")))
         result=baidu.app_search(message)
